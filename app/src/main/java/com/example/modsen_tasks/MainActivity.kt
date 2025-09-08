@@ -28,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.modsen_tasks.ui.screens.LoginScreen
+import com.example.modsen_tasks.ui.screens.PostListScreen
 import com.example.modsen_tasks.ui.screens.SelectTaskScreen
 import com.example.modsen_tasks.ui.theme.ModsenTasksTheme
 
@@ -43,7 +44,7 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = NavRoutes.Home.route) {
                     composable(NavRoutes.Home.route) { SelectTaskScreen(navController) }
                     composable(NavRoutes.Login.route) { LoginScreen(navController) }
-                    composable(NavRoutes.Empty.route) { SelectTaskScreen(navController) }
+                    composable(NavRoutes.PostList.route) { PostListScreen(navController) }
                 }
             }
         }
@@ -54,5 +55,5 @@ class MainActivity : ComponentActivity() {
 sealed class NavRoutes(val route: String) {
     object Home : NavRoutes("home")
     object Login : NavRoutes("login")
-    object Empty : NavRoutes("empty")
+    object PostList : NavRoutes("posts")
 }

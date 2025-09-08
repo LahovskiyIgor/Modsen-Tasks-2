@@ -38,7 +38,7 @@ fun SelectTaskScreen(navController: NavController, viewModel: TasksViewModel = k
         viewModel.eventFlow.collect { event ->
             when (event) {
                 is TasksEvent.NavigateToDetails -> {
-                    navController.navigate("login")
+                    navController.navigate("posts")     //Временно заменил на вкладку с выводом постов
                 }
 
                 is TasksEvent.ShowErrorMessage -> {
@@ -63,8 +63,9 @@ fun SelectTaskScreen(navController: NavController, viewModel: TasksViewModel = k
 
                     ) {
                         items(state.tasks) { task ->
-                            TaskButton(taskName = task.name) {
-                                viewModel.onIntent(TaskIntent.TaskItemClicked(task.id.toString()))
+                            TaskButton(taskName = task.name)
+                            {
+                                    viewModel.onIntent(TaskIntent.TaskItemClicked(task.id.toString()))
                             }
                         }
                     }
