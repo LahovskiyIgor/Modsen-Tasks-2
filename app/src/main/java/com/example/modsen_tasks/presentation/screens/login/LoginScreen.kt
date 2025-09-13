@@ -1,4 +1,4 @@
-package com.example.modsen_tasks.ui.screens
+package com.example.modsen_tasks.presentation.screens.login
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -24,10 +24,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.modsen_tasks.ui.event.LoginEvent
-import com.example.modsen_tasks.ui.intent.LoginIntent
-import com.example.modsen_tasks.ui.state.LoginUiState
-import com.example.modsen_tasks.ui.viewmodel.LoginViewModel
+import com.example.modsen_tasks.presentation.event.LoginEvent
+import com.example.modsen_tasks.presentation.intent.LoginIntent
+import com.example.modsen_tasks.presentation.viewmodel.LoginUiState
+import com.example.modsen_tasks.presentation.viewmodel.LoginViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -52,53 +52,39 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = koinVi
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         content = { innerPadding: PaddingValues ->
-            LoginForm(
-                padding = innerPadding,
-                uiState = uiState,
-                viewModel = viewModel
-            )
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text("Welcome!", fontSize = 24.sp)
+                Spacer(modifier = Modifier.height(48.dp))
+                TextField("Login", uiState.login) {
+                    viewModel.onIntent(LoginIntent.EnterEmail(it))
+
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+                TextField("Password", value = uiState.password) {
+                    viewModel.onIntent(LoginIntent.EnterPassword(it))
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = { viewModel.onIntent(LoginIntent.SubmitLogin) },
+                    enabled = uiState.isButtonEnabled
+                ) {
+                    Text(
+                        "Sign in",
+                        modifier = Modifier.padding(16.dp, 4.dp)
+                    )
+                }
+            }
         }
     )
 }
 
-@Composable
-fun LoginForm(padding: PaddingValues, uiState: LoginUiState, viewModel: LoginViewModel) {
-    Column(
-        modifier = Modifier
-            .padding(padding)
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text("Welcome!", fontSize = 24.sp)
-        Spacer(modifier = Modifier.height(48.dp))
-        TextField("Login", uiState.login) {
-            viewModel.onIntent(LoginIntent.EnterEmail(it))
 
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        TextField("Password", value = uiState.password) {
-            viewModel.onIntent(LoginIntent.EnterPassword(it))
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        Button(onClick = { viewModel.onIntent(LoginIntent.SubmitLogin) }, enabled = uiState.isButtonEnabled) {
-            Text(
-                "Sign in",
-                modifier = Modifier.padding(16.dp, 4.dp)
-            )
-        }
-        if (uiState.isLoading)
-            CircularProgressIndicator()
-    }
-}
 
-@Composable
-fun TextField(placeholderText: String, value: String, onValueChange: (String) -> Unit) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp, 0.dp),
-        placeholder = { Text(placeholderText) })
-}
+
+

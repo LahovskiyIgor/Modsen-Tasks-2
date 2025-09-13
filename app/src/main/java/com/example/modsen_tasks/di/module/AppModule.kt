@@ -1,7 +1,8 @@
 package com.example.modsen_tasks.di.module
 
-import com.example.modsen_tasks.ui.viewmodel.LoginViewModel
-import com.example.modsen_tasks.ui.viewmodel.TasksViewModel
+import com.example.modsen_tasks.presentation.viewmodel.LoginViewModel
+import com.example.modsen_tasks.presentation.viewmodel.PostsViewModel
+import com.example.modsen_tasks.presentation.viewmodel.TasksViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -12,6 +13,10 @@ val appModule = module {
     }
 
     viewModel<TasksViewModel> {
-        TasksViewModel(useCase = get() )
+        TasksViewModel(getTasksUseCase = get() )
+    }
+
+    viewModel<PostsViewModel> {
+        PostsViewModel(getPostListUseCase = get() )
     }
 }

@@ -1,4 +1,4 @@
-package com.example.modsen_tasks.ui.intent
+package com.example.modsen_tasks.presentation.intent
 
 sealed class LoginIntent() {
     data class EnterEmail(val login: String) : LoginIntent()

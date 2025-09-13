@@ -1,4 +1,4 @@
-package com.example.modsen_tasks.ui.theme
+package com.example.modsen_tasks.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 

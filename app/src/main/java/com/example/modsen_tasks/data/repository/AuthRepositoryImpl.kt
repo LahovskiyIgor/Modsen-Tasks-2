@@ -1,7 +1,7 @@
 package com.example.modsen_tasks.data.repository
 
 import com.example.modsen_tasks.data.exception.AuthException
-import com.example.modsen_tasks.data.mapper.UserMapper
+import com.example.modsen_tasks.data.mapper.mapToEntity
 import com.example.modsen_tasks.data.model.UserDataModel
 import com.example.modsen_tasks.domain.model.UserDomainModel
 import com.example.modsen_tasks.domain.repository.IAuthRepository
@@ -18,7 +18,7 @@ class AuthRepositoryImpl : IAuthRepository {
     override suspend fun login(login: String, password: String): UserDomainModel {
         delay(2000)
 
-        return UserMapper.toDomain(
+        return mapToEntity(
             users.find { it.login == login && it.password == password }
                 ?: throw AuthException.InvalidCredentials
         )

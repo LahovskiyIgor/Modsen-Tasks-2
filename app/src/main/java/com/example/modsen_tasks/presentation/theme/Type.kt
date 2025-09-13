@@ -1,4 +1,4 @@
-package com.example.modsen_tasks.ui.theme
+package com.example.modsen_tasks.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
