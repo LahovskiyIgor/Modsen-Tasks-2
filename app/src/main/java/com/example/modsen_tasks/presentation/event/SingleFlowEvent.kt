@@ -1,4 +1,4 @@
-package com.example.modsen_tasks.ui.event
+package com.example.modsen_tasks.presentation.event
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel

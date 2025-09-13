@@ -1,14 +1,14 @@
-package com.example.modsen_tasks.ui.viewmodel
+package com.example.modsen_tasks.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.modsen_tasks.domain.usecase.LoginUseCase
-import com.example.modsen_tasks.ui.event.SingleFlowEvent
-import com.example.modsen_tasks.ui.event.LoginEvent
-import com.example.modsen_tasks.ui.intent.LoginIntent
-import com.example.modsen_tasks.ui.state.LoginUiState
+import com.example.modsen_tasks.presentation.event.SingleFlowEvent
+import com.example.modsen_tasks.presentation.event.LoginEvent
+import com.example.modsen_tasks.presentation.intent.LoginIntent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -16,8 +16,8 @@ class LoginViewModel(
     private val loginUseCase: LoginUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(LoginUiState())
-    val uiState: StateFlow<LoginUiState> = _uiState
+    private val _uiState = MutableStateFlow(LoginUiState(isLoading = true))
+    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
     private val _event = SingleFlowEvent<LoginEvent>(viewModelScope)
     val eventFlow = _event.flow
@@ -39,13 +39,14 @@ class LoginViewModel(
     }
 
     private fun login() {
-        val current = _uiState.value
 
+        val current = _uiState.value
         viewModelScope.launch {
+
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
             try {
-                val user = loginUseCase(current.login, current.password)
+                loginUseCase(current.login, current.password)
 
                 _uiState.update {
                     it.copy(
@@ -62,4 +63,14 @@ class LoginViewModel(
             }
         }
     }
+}
+
+data class LoginUiState(
+    val isLoading: Boolean = false,
+    val login: String = "",
+    val password: String = "",
+    val errorMessage: String? = null
+)
+{
+    val isButtonEnabled: Boolean get() = login.isNotBlank() && password.isNotBlank()
 }

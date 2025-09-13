@@ -1,9 +1,7 @@
-package com.example.modsen_tasks.ui.screens
+package com.example.modsen_tasks.presentation.screens.home
 
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,22 +21,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.modsen_tasks.ui.event.TasksEvent
-import com.example.modsen_tasks.ui.intent.TaskIntent
-import com.example.modsen_tasks.ui.viewmodel.TasksViewModel
+import com.example.modsen_tasks.presentation.event.TasksEvent
+import com.example.modsen_tasks.presentation.intent.TaskIntent.*
+import com.example.modsen_tasks.presentation.viewmodel.TasksUiState
+import com.example.modsen_tasks.presentation.viewmodel.TasksViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SelectTaskScreen(navController: NavController, viewModel: TasksViewModel = koinViewModel()) {
+fun HomeScreen(navController: NavController, viewModel: TasksViewModel = koinViewModel()) {
 
-    val state by viewModel.state.collectAsState()
+    val uiState by viewModel.state.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collect { event ->
             when (event) {
-                is TasksEvent.NavigateToDetails -> {
-                    navController.navigate("posts")     //Временно заменил на вкладку с выводом постов
+                is TasksEvent.NavigateToLogin -> {
+                    navController.navigate("login")
+                }
+
+                is TasksEvent.NavigateToPostList -> {
+                    navController.navigate("posts")
                 }
 
                 is TasksEvent.ShowErrorMessage -> {
@@ -48,30 +51,33 @@ fun SelectTaskScreen(navController: NavController, viewModel: TasksViewModel = k
         }
     }
 
-    when {
-        state.isLoading -> CircularProgressIndicator()
-        else ->
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                content = { innerPadding: PaddingValues ->
-                    LazyColumn(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        content = { innerPadding: PaddingValues ->
 
-                    ) {
-                        items(state.tasks) { task ->
-                            TaskButton(taskName = task.name)
-                            {
-                                    viewModel.onIntent(TaskIntent.TaskItemClicked(task.id.toString()))
-                            }
+            when (val state = uiState) {
+
+                is TasksUiState.ErrorState -> Text("Ошибка: ${state.errorMessage}")
+                is TasksUiState.LoadedState -> LazyColumn(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    items(state.tasks) { task ->
+                        TaskButton(taskName = task.name)
+                        {
+                            viewModel.onIntent(TaskItemClicked(task.id))
                         }
                     }
                 }
-            )
-    }
+
+                TasksUiState.LoadingState -> CircularProgressIndicator()
+
+            }
+        }
+    )
 }
 
 @Composable

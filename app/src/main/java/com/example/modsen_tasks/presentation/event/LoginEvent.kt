@@ -1,4 +1,4 @@
-package com.example.modsen_tasks.ui.event
+package com.example.modsen_tasks.presentation.event
 
 sealed interface LoginEvent {
     data object NavigateToSuccessScreen : LoginEvent
